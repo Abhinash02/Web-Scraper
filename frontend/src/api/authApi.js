@@ -1,7 +1,12 @@
 import axios from "axios";
 
+const baseURL =
+  import.meta.env.MODE === "development"
+    ? import.meta.env.VITE_API_BASE_URL        
+    : import.meta.env.VITE_API_LIVE_URL;       
+
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL,
 });
 
 export const registerRequest = async (payload) => {

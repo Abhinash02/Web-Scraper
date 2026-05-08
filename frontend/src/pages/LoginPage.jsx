@@ -110,15 +110,32 @@ const LoginPage = () => {
               )}
             </button>
 
-            <p className="text-center text-sm text-slate-500">
+            <p className="text-center text-sm text-blue-900">
               Don’t have an account?{" "}
               <Link
                 to="/register"
-                className="font-semibold text-indigo-600 hover:text-indigo-700 hover:underline"
+                className="font-semibold text-fuchsia-800 hover:text-indigo-700 hover:underline"
               >
                 Create one for free
               </Link>
             </p>
+             <div className="mt-8 rounded-2xl bg-blue-50/50 border border-blue-100 p-4 transition-all hover:bg-blue-50">
+  <div className="flex items-center justify-center gap-2 mb-2">
+    <div className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse"></div>
+    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-blue-500">
+      Demo Access
+    </span>
+  </div>
+  
+  <div className="space-y-1 text-center">
+    <p className="text-sm font-medium text-blue-900/80">
+      <span className="opacity-60">Email:</span> abhinash@gmail.com
+    </p>
+    <p className="text-sm font-medium text-blue-900/80">
+      <span className="opacity-60">Pass:</span> 123456
+    </p>
+  </div>
+</div>
           </form>
         </div>
       </div>

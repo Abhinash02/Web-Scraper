@@ -4,7 +4,14 @@ import { getBookmarksRequest, getStoriesRequest } from "../api/storyApi";
 import StoryCard from "../components/StoryCard";
 import PageLoader from "../components/PageLoader";
 import { useAuth } from "../context/AuthContext";
-import { BookOpen, Bookmark, Sparkles, RefreshCw } from "lucide-react";
+import {
+  BookOpen,
+  Bookmark,
+  Sparkles,
+  RefreshCw,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 
 const HomePage = () => {
@@ -13,13 +20,22 @@ const HomePage = () => {
   const [bookmarks, setBookmarks] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const [page, setPage] = useState(1);
+  const [limit] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
+  const [hasNextPage, setHasNextPage] = useState(false);
+  const [hasPrevPage, setHasPrevPage] = useState(false);
+
   useEffect(() => {
     const loadStories = async () => {
       try {
         setLoading(true);
 
-        const storyData = await getStoriesRequest(1, 10);
+        const storyData = await getStoriesRequest(page, limit);
         setStories(storyData.stories || []);
+        setTotalPages(storyData.pagination?.totalPages || 1);
+        setHasNextPage(storyData.pagination?.hasNextPage || false);
+        setHasPrevPage(storyData.pagination?.hasPrevPage || false);
 
         if (isAuthenticated && token) {
           try {
@@ -33,7 +49,9 @@ const HomePage = () => {
                 "Please register first if you are a new user, or log in if you already have an account."
               );
             } else {
-              toast.error(error?.response?.data?.message || "Failed to load bookmarks");
+              toast.error(
+                error?.response?.data?.message || "Failed to load bookmarks"
+              );
             }
 
             setBookmarks([]);
@@ -57,13 +75,15 @@ const HomePage = () => {
     };
 
     loadStories();
-  }, [isAuthenticated, token]);
+  }, [isAuthenticated, token, page, limit]);
 
   const bookmarkSet = useMemo(() => new Set(bookmarks), [bookmarks]);
 
   const handleBookmarkChange = (storyId, nowBookmarked) => {
     setBookmarks((prev) =>
-      nowBookmarked ? [...new Set([...prev, storyId])] : prev.filter((id) => id !== storyId)
+      nowBookmarked
+        ? [...new Set([...prev, storyId])]
+        : prev.filter((id) => id !== storyId)
     );
   };
 
@@ -86,7 +106,7 @@ const HomePage = () => {
               </h1>
 
               <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-500 md:text-base">
-                Browse the top 10 Hacker News stories, log in, and keep the ones you want to revisit.
+                Browse the top 15 Hacker News stories, log in, and keep the ones you want to revisit.
               </p>
             </div>
 
@@ -129,21 +149,49 @@ const HomePage = () => {
         <section className="mt-8">
           {loading ? (
             <div className="grid min-h-[50vh] place-items-center">
-              <div className="rounded-3xl border border-white/70 bg-white/80 p-8 shadow-xl backdrop-blur-xl">
-                <PageLoader text="Loading stories..." />
-              </div>
+              <PageLoader text="Loading stories..." />
             </div>
           ) : (
-            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-              {stories.map((story) => (
-                <StoryCard
-                  key={story._id}
-                  story={story}
-                  isBookmarked={bookmarkSet.has(story._id)}
-                  onBookmarkChange={handleBookmarkChange}
-                />
-              ))}
-            </div>
+            <>
+              <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+                {stories.map((story) => (
+                  <StoryCard
+                    key={story._id}
+                    story={story}
+                    isBookmarked={bookmarkSet.has(story._id)}
+                    onBookmarkChange={handleBookmarkChange}
+                  />
+                ))}
+              </div>
+
+              {totalPages > 1 && (
+                <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+                  <button
+                    onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+                    disabled={!hasPrevPage}
+                    className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <ChevronLeft size={16} />
+                    Previous
+                  </button>
+
+                  <div className="rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-lg">
+                    Page {page} of {totalPages}
+                  </div>
+
+                  <button
+                    onClick={() =>
+                      setPage((prev) => Math.min(prev + 1, totalPages))
+                    }
+                    disabled={!hasNextPage}
+                    className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    Next
+                    <ChevronRight size={16} />
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </section>
       </div>

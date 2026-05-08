@@ -4,7 +4,7 @@ const API = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
 });
 
-export const getStoriesRequest = async (page = 1, limit = 10) => {
+export const getStoriesRequest = async (page = 1, limit = 15) => {
   const { data } = await API.get(`/stories?page=${page}&limit=${limit}`);
   return data;
 };

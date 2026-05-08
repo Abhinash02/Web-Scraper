@@ -42,7 +42,7 @@ const navClass = ({ isActive }) =>
             <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 to-fuchsia-600 text-white shadow-lg shadow-indigo-500/25">
               <BookOpen size={18} />
             </span>
-            HN Digest
+           WEB SCRAP
           </Link>
 
           <nav className="hidden items-center gap-2 md:flex">

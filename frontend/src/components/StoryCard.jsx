@@ -11,11 +11,13 @@ const StoryCard = ({ story, isBookmarked = false, onBookmarkChange }) => {
   const [loading, setLoading] = useState(false);
 
   const handleBookmark = async () => {
-    if (!isAuthenticated) {
-      toast.info("Please login to save bookmarks");
-      navigate("/login");
-      return;
-    }
+  if (!isAuthenticated) {
+  toast.info(
+    "Please register first if you are a new user, or log in if you already have an account."
+  );
+  navigate("/login");
+  return;
+}
 
     try {
       setLoading(true);

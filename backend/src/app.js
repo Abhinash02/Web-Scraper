@@ -11,7 +11,7 @@ const errorHandler = require("./middleware/errorMiddleware");
 const app = express();
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://web-scrap-olive.vercel.app/", 
+  "https://web-scrap-olive.vercel.app", 
 ];
 app.use(
   cors({
@@ -21,13 +21,14 @@ app.use(
       if (allowedOrigins.includes(origin)) {
         return callback(null, true);
       }
-      return callback(new Error("Not allowed by CORS"));
+      console.log("Blocked by CORS origin:", origin);
+      return callback(null, false);
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   })
 );
-
+// app.options("*", cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
